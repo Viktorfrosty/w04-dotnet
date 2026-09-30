@@ -1,0 +1,114 @@
+@inject GameState State
+
+<div class="container my-4">
+  <!-- Scoreboard & Color Customizer -->
+  <div class="row text-center mb-4 p-3 bg-light rounded shadow-sm align-items-center">
+    <div class="col-md-5">
+      <h5 class="fw-bold" style="color: @player1Color">Player 1 Wins: @State.Player1Wins</h5>
+      <div class="d-flex align-items-center justify-content-center gap-2">
+        <label class="small text-muted">Piece Color:</label>
+        <input type="color" @bind="player1Color" class="form-control form-control-color" />
+      </div>
+    </div>
+    <div class="col-md-2 my-2 my-md-0">
+      <button class="btn btn-outline-danger btn-sm" @onclick="ResetGame">New Round</button>
+      <button class="btn btn-outline-secondary btn-sm mt-1" @onclick="ResetScores">Reset Score</button>
+    </div>
+    <div class="col-md-5">
+      <h5 class="fw-bold" style="color: @player2Color">Player 2 Wins: @State.Player2Wins</h5>
+      <div class="d-flex align-items-center justify-content-center gap-2">
+        <label class="small text-muted">Piece Color:</label>
+        <input type="color" @bind="player2Color" class="form-control form-control-color" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Turn Banner / Win Status -->
+  <article class="text-center mb-3">
+    @if (State.Winner == GameState.WinState.NoWinner)
+    {
+      <h3>
+        Turn:
+        <span class="badge" style="background-color: @(State.PlayerTurn == 1 ? player1Color : player2Color)">
+          Player @State.PlayerTurn
+        </span>
+      </h3>
+    }
+    else if (State.Winner == GameState.WinState.Tie)
+    {
+      <h3 class="alert alert-warning">It's a Tie!</h3>
+    }
+    else
+    {
+      <h3 class="alert alert-success">
+        🎉 Player @(State.Winner == GameState.WinState.Player1_Wins ? "1" : "2") Wins!
+      </h3>
+    }
+  </article>
+
+  <div class="row">
+    <!-- Connect 4 Board -->
+    <div class="col-lg-8 d-flex justify-content-center">
+      <div class="board" style="--p1-color: @player1Color; --p2-color: @player2Color;">
+        @for (int i = 0; i < 7; i++)
+        {
+          int col = i;
+          <button class="col-btn" @onclick="() => DropPiece(col)"
+                  disabled="@(State.Winner != GameState.WinState.NoWinner)">
+            ↓
+          </button>
+        }
+
+        @for (int i = 0; i < 42; i++)
+        {
+          int piece = State.Board[i];
+          <div class="cell">
+            <div class="piece @(piece == 1 ? "player1" : piece == 2 ? "player2" : "")"></div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Move History Sidebar -->
+    <div class="col-lg-4 mt-4 mt-lg-0">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white fw-bold">
+          Move History
+        </div>
+        <ul class="list-group list-group-flush overflow-auto" style="max-height: 380px;">
+          @if (State.MoveHistory.Count == 0)
+          {
+            <li class="list-group-item text-muted italic">No moves played yet.</li>
+          }
+          else
+          {
+            @foreach (var move in State.MoveHistory)
+            {
+              <li class="list-group-item small">@move</li>
+            }
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+  private string player1Color = "#e63946";
+  private string player2Color = "#ffb703";
+
+  private void DropPiece(int col)
+  {
+    State.PlayPiece(col);
+  }
+
+  private void ResetGame()
+  {
+    State.ResetBoard();
+  }
+
+  private void ResetScores()
+  {
+    State.ResetScore();
+  }
+}

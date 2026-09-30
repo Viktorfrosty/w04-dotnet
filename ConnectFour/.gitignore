@@ -1,0 +1,28 @@
+# .NET & C# Build Artifacts
+[Bb]in/
+[Oo]bj/
+out/
+[Ls]og/
+[Ll]ogs/
+
+# Visual Studio Code & IDEs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.vs/
+.idea/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+
+# Publish & Deployment Outputs
+publish/
+**/wwwroot/_content/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
